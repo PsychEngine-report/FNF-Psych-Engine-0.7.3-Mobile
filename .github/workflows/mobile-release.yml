@@ -1,11 +1,10 @@
 name: Mobile + Release
 on: workflow_dispatch
 
-permissions: write-all   # ✅ caller must allow write perms too
-
+permissions: write-all
 env:
   PROJECT_NAME: PsychEngine
-  REPO_PATH: PsychEngine-report/PsychEngine-0.7.3
+  REPO_PATH: PsychEngine-report/FNF-Psych-Engine-0.7.3-Mobile
 
 jobs:
   get-commit-hash:
