@@ -553,6 +553,56 @@ class Paths
 		}
 		return #if mobile StorageSystem.getDirectory() + #end 'mods/' + key;
 	}
+
+	#if (android || linux || ios)
+	static function findFile(key:String):String {
+		var targetParts:Array<String> = key.replace('\\', '/').split('/');
+		if (targetParts.length == 0) return null;
+
+		var baseDir:String = targetParts.shift();
+		var searchDirs:Array<String> = [
+			mods(Mods.currentModDirectory + '/' + baseDir),
+			mods(baseDir)
+		];
+
+		for (part in targetParts) {
+			if (part == '') continue;
+
+			var nextDir:String = findNodeInDirs(searchDirs, part);
+			if (nextDir == null) {
+				return null;
+			}
+
+			searchDirs = [nextDir];
+		}
+
+		return searchDirs[0];
+	}
+
+	static function findNodeInDirs(dirs:Array<String>, key:String):String {
+		for (dir in dirs) {
+			var node:String = findNode(dir, key);
+			if (node != null) {
+				return dir + '/' + node;
+			}
+		}
+		return null;
+	}
+
+	static function findNode(dir:String, key:String):String {
+		try {
+			var allFiles:Array<String> = Paths.readDirectory(dir);
+			var fileMap:Map<String, String> = new Map();
+
+			for (file in allFiles) {
+				fileMap.set(file.toLowerCase(), file);
+			}
+
+			return fileMap.get(key.toLowerCase());
+		} catch (e:Dynamic) {
+			return null;
+		}
+	#end
 	#end
 
 	#if flxanimate
